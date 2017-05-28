@@ -22,8 +22,8 @@ import scala.concurrent.Future
 class Application @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controller
   with MongoController with ReactiveMongoComponents {
 
-  def jsonCollection = reactiveMongoApi.db.collection[JSONCollection]("widgets");
-  def bsonCollection = reactiveMongoApi.db.collection[BSONCollection]("widgets");
+  def jsonCollection = reactiveMongoApi.db.collection[JSONCollection]("surveys");
+  def bsonCollection = reactiveMongoApi.db.collection[BSONCollection]("surveys");
 
   def index = Action {
     Logger.info("Index page visited...")

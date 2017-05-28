@@ -9,25 +9,25 @@ import play.api.mvc._
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
 import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.{BSONObjectID, BSONDocument}
-import repos.WidgetRepoImpl
+import repos.SurveyRepoImpl
 
 /**
   * Created by amadeusz on 14.05.2017.
   */
-class Widgets @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controller
+class Surveys @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controller
   with MongoController with ReactiveMongoComponents {
 
-  import controllers.WidgetFields._
+  import controllers.SurveyFields._
 
   def index = Action.async { implicit request =>
-    widgetRepo.find().map(widgets => Ok(Json.toJson(widgets)))
+    surveyRepo.find().map(surveys => Ok(Json.toJson(surveys)))
   }
 
   def create = Action.async(BodyParsers.parse.json) { implicit request =>
     val qNumber = (request.body \ QNumber).as[Int]
     val answer = (request.body \ Answer).as[String]
     val dateTime = (request.body \ DateTime).as[String]
-    widgetRepo.save(BSONDocument(
+    surveyRepo.save(BSONDocument(
       QNumber -> qNumber,
       Answer -> answer,
       DateTime -> dateTime
@@ -35,27 +35,27 @@ class Widgets @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controll
   }
 
   def read(id: String) = Action.async { implicit request =>
-    widgetRepo.select(BSONDocument(Id -> BSONObjectID(id))).map(widget => Ok(Json.toJson(widget)))
+    surveyRepo.select(BSONDocument(Id -> BSONObjectID(id))).map(survey => Ok(Json.toJson(survey)))
   }
 
   def update(id: String) = Action.async(BodyParsers.parse.json) { implicit request =>
     val qNumber = (request.body \ QNumber).as[String]
     val answer = (request.body \ Answer).as[String]
     val dateTime = (request.body \ DateTime).as[String]
-    widgetRepo.update(BSONDocument(Id -> BSONObjectID(id)),
+    surveyRepo.update(BSONDocument(Id -> BSONObjectID(id)),
       BSONDocument("$set" -> BSONDocument(QNumber -> qNumber, Answer -> answer, DateTime -> dateTime)))
       .map(result => Accepted)
   }
 
   def delete(id: String) = Action.async {
-    widgetRepo.remove(BSONDocument(Id -> BSONObjectID(id)))
+    surveyRepo.remove(BSONDocument(Id -> BSONObjectID(id)))
       .map(result => Accepted)
   }
 
-  def widgetRepo = new WidgetRepoImpl(reactiveMongoApi)
+  def surveyRepo = new SurveyRepoImpl(reactiveMongoApi)
 }
 
-object WidgetFields {
+object SurveyFields {
   val Id = "_id"
   val QNumber = "qNumber"
   val Answer = "answer"

@@ -15,7 +15,7 @@ import scala.concurrent.{ExecutionContext, Future}
 /**
   * Created by amadeusz on 14.05.2017.
   */
-trait WidgetRepo {
+trait SurveyRepo {
   def find()(implicit ec: ExecutionContext): Future[List[JsObject]]
 
   def select(selector: BSONDocument)(implicit ec: ExecutionContext): Future[Option[JsObject]]
@@ -27,9 +27,9 @@ trait WidgetRepo {
   def save(document: BSONDocument)(implicit ec: ExecutionContext): Future[WriteResult]
 }
 
-class WidgetRepoImpl @Inject() (reactiveMongoApi: ReactiveMongoApi) extends WidgetRepo {
+class SurveyRepoImpl @Inject()(reactiveMongoApi: ReactiveMongoApi) extends SurveyRepo {
 
-  def collection = reactiveMongoApi.db.collection[JSONCollection]("widgets");
+  def collection = reactiveMongoApi.db.collection[JSONCollection]("surveys");
 
   override def find()(implicit ec: ExecutionContext): Future[List[JsObject]] = {
     val genericQueryBuilder = collection.find(Json.obj());
