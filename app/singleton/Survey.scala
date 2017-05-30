@@ -10,7 +10,7 @@ object Survey {
   val questions: ListMap[String, Map[String, List[String]]] = ListMap(
     "age" -> Map(
       "question" -> List(
-        "1. Wiek"
+        "Wiek"
       ),
       "answers" -> List(
         "10 - 15",
@@ -23,7 +23,7 @@ object Survey {
     ),
     "gender" -> Map(
       "question" -> List(
-        "2. Płeć"
+        "Płeć"
       ),
       "answers" -> List(
         "kobieta",
@@ -32,7 +32,7 @@ object Survey {
     ),
     "residence" -> Map(
       "question" -> List(
-        "3. Miejsce zamieszkania"
+        "Miejsce zamieszkania"
       ),
       "answers" -> List(
         "wieś",
@@ -44,7 +44,7 @@ object Survey {
     ),
     "education" -> Map(
       "question" -> List(
-        "4. Kierunek studiów"
+        "Kierunek studiów"
       ),
       "answers" -> List(
         "humanistyczny",
@@ -54,7 +54,7 @@ object Survey {
     ),
     "year" -> Map(
       "question" -> List(
-        "5. Rok studiów"
+        "Rok studiów"
       ),
       "answers" -> List(
         "1",
@@ -67,7 +67,7 @@ object Survey {
     ),
     "faith" -> Map(
       "question" -> List(
-        "6. Stosunek do wiary"
+        "Stosunek do wiary"
       ),
       "answers" -> List(
         "jestem wierzący/a",
@@ -78,7 +78,7 @@ object Survey {
     ),
     "family_faith" -> Map(
       "question" -> List(
-        "7. Czy należysz do wierzącej rodziny?"
+        "Czy należysz do wierzącej rodziny?"
       ),
       "answers" -> List(
         "tak",
@@ -88,7 +88,7 @@ object Survey {
     ),
     "faith_importance" -> Map(
       "question" -> List(
-        "8. Jak bardzo wiara jest ważna w Twoim życiu?"
+        "Jak bardzo wiara jest ważna w Twoim życiu?"
       ),
       "answers" -> List(
         "nie ma dla mnie znaczenia",
@@ -98,7 +98,7 @@ object Survey {
     ),
     "altruism" -> Map(
       "question" -> List(
-        "9. Czy czujesz potrzebę niesienia pomocy innym?"
+        "Czy czujesz potrzebę niesienia pomocy innym?"
       ),
       "answers" -> List(
         "chciałbym, żeby efekty mojej pracy pomagały ludziom",

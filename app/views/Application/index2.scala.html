@@ -5,7 +5,7 @@
     <head>
     <script type="text/javascript">
     function Validate() {
-        names = GetAllRadioNames();
+        var names = GetAllRadioNames();
         console.log("names : " + names);
         
         for (var i = 0; i < names.length; i++) {
@@ -64,7 +64,7 @@
                 <h1>@message</h1>
                 @for(((name, body), qIndex) <- questions.zipWithIndex) {
                     <label>
-                        <span><img src="@routes.Assets.at("images/favicon.png")"> @body("question")</span>
+                        <span><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1). @body("question")</span>
                         <fieldset>
                             @for((answer, aIndex) <- body("answers").zipWithIndex) {
                                 <label><input type="radio" name="@name" value="@aIndex"/> @answer</label>
