@@ -10,19 +10,19 @@
         for (var i = 0; i < names.length; i++) {
            ValidateSingleTest(names[i]);
             
-        };
+        }
 
     }
         
     function ValidateSingleTest(name) {
-        var radios = document.getElementsByName(name)
+        var radios = document.getElementsByName(name);
 
         for (var i = 0; i < radios.length; i++) {
             if (radios[i].checked) {
-                console.log("Selected Value of test name: " + name + " " + radios[i].value)
+                console.log("Selected Value of test name: " + name + " " + radios[i].value);
                 return true; // checked
             }
-        };
+        }
 
     // not checked, show error
         document.getElementById('ValidationError').innerHTML = 'Error!!!';
@@ -150,8 +150,7 @@
                             <label> <input type="radio" name="religion_4" value="4"> nie czuję żadnej wewnętrznej potrzeby niesienia pomocy ludziom</label>
                     </fieldset>
                 </label>
-                <div id="ValidationError" name="ValidationError">
-</div>
+                <div id="ValidationError" name="ValidationError"></div>
                 <label>
                 <input type="button" class="button" value="Wyślj" onclick="return Validate();"/>
                 </label>

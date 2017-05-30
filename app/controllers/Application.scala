@@ -30,6 +30,11 @@ class Application @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Cont
     Ok(views.html.Application.index("Witaj na stronie!"))
   }
 
+  def index2 = Action {
+    Logger.info("Index2 page visited...")
+    Ok(views.html.Application.index2("Witaj!", singleton.Survey.questions))
+  }
+
   def initDB = Action {
     Logger.info("DB init...")
 

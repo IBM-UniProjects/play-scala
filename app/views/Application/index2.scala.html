@@ -1,0 +1,83 @@
+@import scala.collection.immutable.ListMap
+@(message: String, questions: ListMap[String, Map[String, List[String]]])
+
+<html>
+    <head>
+    <script type="text/javascript">
+    function Validate() {
+        names = GetAllRadioNames();
+        console.log("names : " + names);
+        
+        for (var i = 0; i < names.length; i++) {
+           ValidateSingleTest(names[i]);
+            
+        }
+
+    }
+        
+    function ValidateSingleTest(name) {
+        var radios = document.getElementsByName(name);
+
+        for (var i = 0; i < radios.length; i++) {
+            if (radios[i].checked) {
+                console.log("Selected Value of test name: " + name + " " + radios[i].value);
+                return true; // checked
+            }
+        }
+
+    // not checked, show error
+        document.getElementById('ValidationError').innerHTML = 'Error!!!';
+
+            
+        return false;
+    }
+        
+    function GetAllRadioNames() {
+        var radioButtons = [];
+        var names = [];
+        radioButtons = document.getElementById("survey1");
+        
+        for (var i = 0; i < radioButtons.length ; i++) {
+                if(radioButtons[i].type == 'radio') {
+                    if (!names.includes(radioButtons[i].name)) {
+                        names.push(radioButtons[i].name);    
+                    }
+                }
+            
+        }
+        return names;
+    }
+        
+        
+        
+</script>
+        <title>Projekt RAIM</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
+    </head>
+    <body>
+        <div class="main">
+            <h1>Ankieta na temat poglądów religijnych</h1>
+            <span></span>
+        </div>
+        <form name="survey" id="survey1">
+            <div class="box">
+                <h1>@message</h1>
+                @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                    <label>
+                        <span><img src="@routes.Assets.at("images/favicon.png")"> @body("question")</span>
+                        <fieldset>
+                            @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                                <label><input type="radio" name="@name" value="@aIndex"/> @answer</label>
+                            }
+                        </fieldset>
+                    </label>
+                }
+                <div id="ValidationError" name="ValidationError"></div>
+                <label>
+                <input type="button" class="button" value="Wyślj" onclick="return Validate();"/>
+                </label>
+            </div>
+        </form>
+    </body>
+    
+</html>

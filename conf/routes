@@ -5,6 +5,9 @@
 # Home Page
 GET           /                      controllers.Application.index
 
+# Pages
+GET           /index2                controllers.Application.index2
+
 # Database intialization and cleanup
 GET           /cleanup               controllers.Application.cleanup
 GET           /initDB                controllers.Application.initDB

@@ -1,3 +1,4 @@
+/project/.sbtserver
 /project/play-fork-run.sbt
 logs
 target
