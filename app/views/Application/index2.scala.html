@@ -64,7 +64,15 @@
                 <h1>@message</h1>
                 @for(((name, body), qIndex) <- questions.zipWithIndex) {
                     <label>
-                        <span><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1). @body("question")</span>
+                        <span><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
+                            @for((line, index) <- body("question").zipWithIndex) {
+                                @if(index == 0) {
+                                    @line:<br>
+                                } else {
+                                    <i style="font-size: 75%">@line</i><br>
+                                }
+                            }
+                        </span>
                         <fieldset>
                             @for((answer, aIndex) <- body("answers").zipWithIndex) {
                                 <label><input type="radio" name="@name" value="@aIndex"/> @answer</label>
