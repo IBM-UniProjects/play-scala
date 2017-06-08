@@ -2,22 +2,21 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home Page
+# Home Page / Survey
 GET           /                      controllers.Application.index
-
-# Pages
-GET           /index2                controllers.Application.index2
+# Results
+GET           /results               controllers.Application.results
 
 # Database intialization and cleanup
 GET           /cleanup               controllers.Application.cleanup
 GET           /initDB                controllers.Application.initDB
 
-# Widgets
+# Surveys
 GET           /api/surveys           controllers.Surveys.index
 GET           /api/survey/:id        controllers.Surveys.read(id: String)
 POST          /api/survey            controllers.Surveys.create
-DELETE        /api/survey/:id        controllers.Surveys.delete(id: String)
-PATCH         /api/survey/:id        controllers.Surveys.update(id: String)
+#DELETE        /api/survey/:id        controllers.Surveys.delete(id: String)
+#PATCH         /api/survey/:id        controllers.Surveys.update(id: String)
 
 # Assets
 GET           /assets/*file          controllers.Assets.at(path="/public", file)

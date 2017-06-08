@@ -1,158 +1,114 @@
-@(message: String)
+@import scala.collection.immutable.ListMap
+@(message: String, questions: ListMap[String, Map[String, List[String]]])
 
 <html>
     <head>
-    <script type="text/javascript">
-    function Validate() {
-        names = GetAllRadioNames();
-        console.log("names : " + names);
-        
-        for (var i = 0; i < names.length; i++) {
-           ValidateSingleTest(names[i]);
-            
-        }
+        <script type="text/javascript">
+            function Validate() {
+                document.getElementById('ValidationError').innerHTML = ''
+                var names = GetAllRadioNames();
+                console.log("names : " + names);
+                var validated = true;
 
-    }
-        
-    function ValidateSingleTest(name) {
-        var radios = document.getElementsByName(name);
-
-        for (var i = 0; i < radios.length; i++) {
-            if (radios[i].checked) {
-                console.log("Selected Value of test name: " + name + " " + radios[i].value);
-                return true; // checked
+                for (var i = 0; i < names.length; i++) {
+                   validated = ValidateSingleTest(names[i], i+1);
+                }
+                return validated
             }
-        }
-
-    // not checked, show error
-        document.getElementById('ValidationError').innerHTML = 'Error!!!';
-
-            
-        return false;
-    }
+                
+            function ValidateSingleTest(name, num) {
+                var radios = document.getElementsByName(name);
         
-    function GetAllRadioNames() {
-        var radioButtons = [];
-        var names = [];
-        radioButtons = document.getElementById("survey1");
-        
-        for (var i = 0; i < radioButtons.length ; i++) {
-                if(radioButtons[i].type == 'radio') {
-                    if (!names.includes(radioButtons[i].name)) {
-                        names.push(radioButtons[i].name);    
+                for (var i = 0; i < radios.length; i++) {
+                    if (radios[i].checked) {
+                        console.log("Selected Value of test name: " + name + " " + radios[i].value);
+                        return true; // checked
                     }
                 }
-            
-        }
-        return names;
-    }
-        
-        
-        
-</script>
+            // not checked, show error
+                document.getElementById('ValidationError').innerHTML += '<span style="color: red"><center>Odpowiedz w punkcie numer ' + num + '!</center></span><br>';
+                return false;
+            }
+                
+            function GetAllRadioNames() {
+                var names = [];
+                var radioButtons = document.getElementById("survey");
+                
+                for (var i = 0; i < radioButtons.length ; i++) {
+                        if(radioButtons[i].type == 'radio') {
+                            if (!names.includes(radioButtons[i].name)) {
+                                names.push(radioButtons[i].name);    
+                            }
+                        }
+                    
+                }
+                return names;
+            }
+
+            function Submit() {
+                var validated = Validate();
+                if (validated) {
+                    var form = document.forms["survey"];
+                    var survey = {};
+                    @for((question, _) <- questions) {
+                    survey.@question = parseInt(form["@question"].value);
+                    }
+                    var httpRequest = new XMLHttpRequest();
+                    var url = "http://" + window.location.host + "/api/survey";
+                    httpRequest.open("POST", url, true);
+                    httpRequest.setRequestHeader("Content-type", "application/json");
+                    httpRequest.onreadystatechange = function () {
+                        if (httpRequest.readyState === 4) {
+                            if (httpRequest.status === 200) {
+                                var json = JSON.parse(httpRequest.responseText);
+                                console.log(survey);
+                            }
+                            if (httpRequest.status === 201) {
+                                window.location.href = "http://" + window.location.host + "/results";
+                            } else {
+                                document.getElementById('ValidationError').innerHTML += '<span style="color: red"><center>Error ' + httpRequest.status + '! Spróbuj jeszcze raz.</center></span><br>'
+                            }
+                        }
+                    };
+                    var data = JSON.stringify(survey);
+                    httpRequest.send(data);
+
+                }
+            }
+        </script>
         <title>Projekt RAIM</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
     </head>
     <body>
         <div class="main">
-            <h1>Ankieta na temat poglądów religijnych</h1>
-            <span></span>
+            <h1>Ankieta na temat poglądów religijnych</h1><br>
         </div>
-        <form name="survey" id="survey1">
+        <form name="survey" id="survey">
             <div class="box">
-                <h1>@message</h1>
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 1.Wiek</span>
-                    <fieldset>
-                            <label> <input type="radio" name="age" value="1"> 10 - 15 </label>
-                            <label> <input type="radio" name="age" value="2"> 15 - 20 </label>
-                            <label> <input type="radio" name="age" value="3"> 20 - 25 </label>
-                            <label> <input type="radio" name="age" value="4"> 25 - 30 </label>
-                            <label> <input type="radio" name="age" value="5"> 30 - 35 </label>
-                            <label> <input type="radio" name="age" value="6"> więcej niż 35</label>
-                    </fieldset>
-                </label>
-                
-                 <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 2.Płeć</span>
-                    <fieldset>
-                            <label> <input type="radio" name="gender" value="1"> kobieta </label>
-                            <label> <input type="radio" name="gender" value="2"> mężczyzna </label>
-                    </fieldset>
-                </label>
-                
-                 <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 3.Miejsce zamieszkania</span>
-                    <fieldset>
-                            <label> <input type="radio" name="accomodation" value="1"> wieś </label>
-                            <label> <input type="radio" name="accomodation" value="2"> miasto do 10 tyś. ludzi </label>
-                            <label> <input type="radio" name="accomodation" value="3"> miasto do 25 tyś. ludzi </label>
-                            <label> <input type="radio" name="accomodation" value="4"> miasto do 100 tyś. ludzi </label>
-                            <label> <input type="radio" name="accomodation" value="5"> miasto powyżej 100 tyś. ludzi </label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 4.Na jakim kierunku studiów uczysz się/ jaki skończyłeś/aś ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="education_path" value="1"> humanistyczny</label>
-                            <label> <input type="radio" name="education_path" value="2"> ścisły </label>
-                            <label> <input type="radio" name="education_path" value="3"> nie studiuje i nie ukończyłem/łam żadnych studiów</label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 5.Jeżeli studiujesz, to na którym roku studiów jesteś ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="religion_0" value="1"> 1</label>
-                            <label> <input type="radio" name="religion_0" value="2"> 2 </label>
-                            <label> <input type="radio" name="religion_0" value="3"> 3</label>
-                            <label> <input type="radio" name="religion_0" value="4"> 4 </label>
-                            <label> <input type="radio" name="religion_0" value="5"> 5</label>
-                            <label> <input type="radio" name="religion_0" value="6"> >5</label>
-                            <label> <input type="radio" name="religion_0" value="7"> nie dotyczy </label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 6.Jaki jest twój stosunek do wiary ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="religion_1" value="1"> jestem wierzący/a</label>
-                            <label> <input type="radio" name="religion_1" value="2"> wierzę w siłę nadprzyrodzoną, ale nie w żadną religię</label>
-                            <label> <input type="radio" name="religion_1" value="3"> ateista/ka</label>
-                            <label> <input type="radio" name="religion_1" value="4"> nie jestem uduchowiony/a w żaden sposób </label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 7.Czy twoja rodzina jest wierząca ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="religion_2" value="1"> tak</label>
-                            <label> <input type="radio" name="religion_2" value="2"> nie </label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 6.Jak bardzo wiara jest ważna w twoim życiu ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="religion_3" value="1"> nie ma dla mnie znaczenia </label>
-                            <label> <input type="radio" name="religion_3" value="2"> ważna </label>
-                            <label> <input type="radio" name="religion_3" value="3"> bardzo ważna </label>
-                    </fieldset>
-                </label>
-                
-                <label>
-                    <span> <img src="@routes.Assets.at("images/favicon.png")"> 7.Jak bardzo czujesz potrzebę niesienia pomocy innym ludziom ?</span>
-                    <fieldset>
-                            <label> <input type="radio" name="religion_4" value="1"> chciałbym/łabym aby efekty mojej pracy pomagały ludziom</label>
-                            <label> <input type="radio" name="religion_4" value="2"> pomagam, ale tylko ludziom w moim otoczeniu</label>
-                            <label> <input type="radio" name="religion_4" value="3"> pomagam, ale tylko jeżeli ktoś poprosi mnie o pomoc </label>
-                            <label> <input type="radio" name="religion_4" value="4"> nie czuję żadnej wewnętrznej potrzeby niesienia pomocy ludziom</label>
-                    </fieldset>
-                </label>
+                @for(m <- message.split('\n')){
+                    <center><h3>@m</h3></center>
+                }
+                @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                    <label id="@qIndex">
+                        <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
+                            @for((line, index) <- body("question").zipWithIndex) {
+                                @if(index == 0) {
+                                    @line:<br>
+                                } else {
+                                    <i style="font-size: 75%">@line</i><br>
+                                }
+                            }
+                        </span>
+                        <fieldset class="question" id="@qIndex">
+                            @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                                <label><input type="radio" name="@name" value="@aIndex" /> @answer</label>
+                            }
+                        </fieldset>
+                    </label>
+                }
                 <div id="ValidationError" name="ValidationError"></div>
                 <label>
-                <input type="button" class="button" value="Wyślj" onclick="return Validate();"/>
+                <input type="button" class="button" id="button" value="Wyślj" onclick="return Submit()"/>
                 </label>
             </div>
         </form>

@@ -7,9 +7,9 @@ import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.libs.json.Json
 import play.api.mvc._
 import play.modules.reactivemongo.{MongoController, ReactiveMongoApi, ReactiveMongoComponents}
-import reactivemongo.api.commands.WriteResult
 import reactivemongo.bson.{BSONObjectID, BSONDocument}
 import repos.SurveyRepoImpl
+import singleton.Survey
 
 /**
   * Created by amadeusz on 14.05.2017.
@@ -21,17 +21,15 @@ class Surveys @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controll
 
   def index = Action.async { implicit request =>
     surveyRepo.find().map(surveys => Ok(Json.toJson(surveys)))
+
   }
 
   def create = Action.async(BodyParsers.parse.json) { implicit request =>
-    val qNumber = (request.body \ QNumber).as[Int]
-    val answer = (request.body \ Answer).as[String]
-    val dateTime = (request.body \ DateTime).as[String]
-    surveyRepo.save(BSONDocument(
-      QNumber -> qNumber,
-      Answer -> answer,
-      DateTime -> dateTime
-    )).map(result => Created)
+    var document = BSONDocument()
+    Questions.keys.foreach(question =>
+      document = document.add(question -> (request.body \ question).as[Int])
+    )
+    surveyRepo.save(document).map(result => Created)
   }
 
   def read(id: String) = Action.async { implicit request =>
@@ -39,11 +37,12 @@ class Surveys @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controll
   }
 
   def update(id: String) = Action.async(BodyParsers.parse.json) { implicit request =>
-    val qNumber = (request.body \ QNumber).as[String]
-    val answer = (request.body \ Answer).as[String]
-    val dateTime = (request.body \ DateTime).as[String]
+    var document = BSONDocument()
+    Questions.keys.foreach(question =>
+      document = document.add(question -> (request.body \ question).as[Int])
+    )
     surveyRepo.update(BSONDocument(Id -> BSONObjectID(id)),
-      BSONDocument("$set" -> BSONDocument(QNumber -> qNumber, Answer -> answer, DateTime -> dateTime)))
+      BSONDocument("$set" -> document))
       .map(result => Accepted)
   }
 
@@ -57,7 +56,5 @@ class Surveys @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Controll
 
 object SurveyFields {
   val Id = "_id"
-  val QNumber = "qNumber"
-  val Answer = "answer"
-  val DateTime = "dateTime"
+  val Questions = Survey.questions
 }

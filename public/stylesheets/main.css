@@ -14,7 +14,11 @@ form, input, select, textarea {
     color:#ffffff;
 }
 
-fieldset {
+span .results {
+    color: red;
+}
+
+.question {
     display: block;
     margin-left: 10px;
     margin-right: 10px;
@@ -25,7 +29,7 @@ fieldset {
 
 div.main {
     margin:0 auto;
-    width:768px;
+    width:800px;
     background: #161712;
     position:relative;
     top:50px;
@@ -34,9 +38,9 @@ div.main {
 div.main span{
     color:#bbbbbb;
     font-size:16px;
-    width:500px;
+    width:inherit;
     text-align:center;
-    padding:10px 20px 20px 20px;
+    padding:20px 20px 20px 20px;
     margin-top: 20px;
     margin-bottom: 20px;
 }
@@ -50,7 +54,7 @@ div.main h1 {
 
 div.box {
     margin:0 auto;
-    width:768px;
+    width:800px;
     background: #161712;
     position:relative;
     top:50px;
@@ -77,7 +81,7 @@ div.box label span {
     font-size:16px;
     width:inherit;
     text-align:left;
-    padding:10px 20px 20px 20px;
+    padding:20px 20px 20px 20px;
 }
 
 div.box .wpis {
@@ -108,7 +112,7 @@ div.box .button	{
     background:#CC0000;
     position: relative;
     top:10px;
-    left:330px;
+    left:350px;
     width:100px;
     border-bottom: 1px double #660000;
     border-top: 1px double #660000;

@@ -7,6 +7,12 @@ import scala.collection.immutable.List
   * Created by amadeusz on 28.05.2017.
   */
 object Survey {
+  val message =
+    """
+      |Witaj w ankiecie na temat poglądów religijnych.
+      |Starannie przeczytaj każdy punkt i udziel szczerej odpowiedzi.
+      |Jeżeli żadna z nich nie jest odpowiednia, zaznacz najbliższą prawdy.
+    """.stripMargin
   val questions: ListMap[String, Map[String, List[String]]] = ListMap(
     "age" -> Map(
       "question" -> List(

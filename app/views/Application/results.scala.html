@@ -1,0 +1,42 @@
+@import scala.collection.immutable.ListMap
+@import scala.collection.mutable
+@(message: String, questions: ListMap[String, Map[String, List[String]]], count: mutable.ListMap[String, Array[Int]], totalNum: Int)
+
+<html>
+    <head>
+        <title>Projekt RAIM</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
+    </head>
+    <body>
+        <div class="main">
+            <h1>Ankieta na temat poglądów religijnych</h1><br>
+        </div>
+        <form name="survey" id="survey">
+            <div class="box">
+                @for(m <- message.split('\n')){
+                    <center><h3>@m</h3></center>
+                    <center><h3>@totalNum wypełnionych ankiet</h3></center>
+                }
+                @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                    <label id="@qIndex">
+                        <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
+                            @for((line, index) <- body("question").zipWithIndex) {
+                                @if(index == 0) {
+                                    @line:<br>
+                                } else {
+                                    <i style="font-size: 75%">@line</i><br>
+                                    }
+                            }
+                        </span>
+                        <div class="question" id="@qIndex">
+                        @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                            <label>@{"%.2f".format(count(name)(aIndex).toDouble/totalNum * 100)}% - @{count(name)(aIndex)}:<br>@answer</label>
+                        }
+                        </div>
+                    </label>
+                }
+            </div>
+        </form>
+    </body>
+
+</html>
