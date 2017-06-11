@@ -6,6 +6,9 @@
     <head>
         <title>Projekt RAIM</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="http://code.highcharts.com/highcharts.js"></script>
+        <script src="@routes.Assets.at("/javascripts/dark-unica.js")"></script>
         <style>
             div.box label {
                 color:#bbbbbb;
@@ -40,7 +43,7 @@
                     <center><h3>@totalNum ankietowanych</h3></center>
                 }
                 @for(((name, body), qIndex) <- questions.zipWithIndex) {
-                    <label id="@qIndex" class="boxlabel">
+                    <label id="@qIndex">
                         <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
                             @for((line, index) <- body("question").zipWithIndex) {
                                 @if(index == 0) {
@@ -51,9 +54,45 @@
                             }
                         </span>
                         <div class="question" id="@qIndex">
-                        @for((answer, aIndex) <- body("answers").zipWithIndex) {
-                            <label>@{"%.2f".format(count(name)(aIndex).toDouble/totalNum * 100)}% - @{count(name)(aIndex)}:<br>@answer</label>
-                        }
+                            <div id="container@qIndex" style="width:100%; height:400px;"></div>
+                            <script>
+                            $(document).ready(function () {
+                                data = [];
+                                @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                                    data.push({name: '@answer.replace("'", "")', y: @count(name)(aIndex)});
+                                }
+                                // Build the chart
+                                Highcharts.chart('container@qIndex', {
+                                    chart: {
+                                        plotBackgroundColor: null,
+                                        plotBorderWidth: null,
+                                        plotShadow: false,
+                                        type: 'pie'
+                                    },
+                                    title: {
+                                        text: '@{body("question")(0)}'
+                                    },
+                                    tooltip: {
+                                        pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+                                    },
+                                    plotOptions: {
+                                        pie: {
+                                            allowPointSelect: true,
+                                            cursor: 'pointer',
+                                            dataLabels: {
+                                                enabled: false
+                                            },
+                                            showInLegend: true
+                                        }
+                                    },
+                                    series: [{
+                                        name: 'udział',
+                                        colorByPoint: true,
+                                        data: data
+                                    }]
+                                });
+                            });
+                            </script>
                         </div>
                     </label>
                 }

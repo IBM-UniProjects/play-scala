@@ -60,7 +60,34 @@ class Application @Inject()(val reactiveMongoApi: ReactiveMongoApi) extends Cont
         surveys += question -> count
       }
     }
-    Ok(views.html.Application.results("WYNIKI", singleton.Survey.questions, surveys, surveysNum))
+    Ok(views.html.Application.results("Wyniki", singleton.Survey.questions, surveys, surveysNum))
+  }
+
+  def charts = Action {
+    Logger.info("Chart page visited")
+    val query = surveyRepo.find().map(surveys => Json.toJson(surveys))
+    val result = Await.result(query, 3  seconds).as[JsValue]
+    var surveys : ListMap[String, Array[Int]] = ListMap()
+    val surveysNum = result.as[JsArray].value.length
+    if (result.isInstanceOf[JsArray]) {
+      for((question, body) <- singleton.Survey.questions) {
+        val answers = (result.as[JsArray] \\ question)
+        var count : Array[Int] = Array.fill[Int](body("answers").length)(0)
+        answers.foreach(a => count(a.as[Int]) += 1)
+        surveys += question -> count
+      }
+    }
+    Ok(views.html.Application.charts("Wykresy", singleton.Survey.questions, surveys, surveysNum))
+  }
+
+  def bayes = Action {
+    Logger.info("Bayes page visited")
+    Ok(views.html.Application.bayes("Naiwny klasyfikator bayesowski", singleton.Survey.questions))
+  }
+
+  def apriori = Action {
+    Logger.info("Apriori page visited")
+    Ok(views.html.Application.apriori("Algorytm Apriori", singleton.Survey.questions))
   }
 
   def initDB = Action {

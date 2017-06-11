@@ -29,7 +29,7 @@ span .results {
 
 div.main {
     margin:0 auto;
-    width:800px;
+    width:900px;
     background: #161712;
     position:relative;
     top:50px;
@@ -54,7 +54,7 @@ div.main h1 {
 
 div.box {
     margin:0 auto;
-    width:800px;
+    width:900px;
     background: #161712;
     position:relative;
     top:50px;
@@ -67,13 +67,13 @@ div.box h1 {
     padding:5px 0 5px 5px;
 }
 
-div.box label {
-    color:#bbbbbb;
-    width:100%;
-    display: block;
-    background: #161712;
-    padding:10px 0 10px 0;
-}
+/*div.box label {*/
+    /*color:#bbbbbb;*/
+    /*width:100%;*/
+    /*display: block;*/
+    /*background: #161712;*/
+    /*padding:10px 0 10px 0;*/
+/*}*/
 
 div.box label span {
     display: block;
@@ -118,4 +118,22 @@ div.box .button	{
     border-top: 1px double #660000;
     border-left:1px double #FF0033;
     border-right:1px double #FF0033;
+}
+
+.btn {
+    -webkit-border-radius: 27;
+    -moz-border-radius: 27;
+    border-radius: 27px;
+    font-family: 'Source Code Pro', monospace !important;
+    color: #f1f1f1;
+    font-size: 15px;
+    background: #161712;
+    padding: 10px 20px 10px 20px;
+    border: solid #f1f1f1 2px;
+    text-decoration: none;
+}
+
+.btn:hover {
+    background: #3b3b39;
+    text-decoration: none;
 }

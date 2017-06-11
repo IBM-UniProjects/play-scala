@@ -76,6 +76,20 @@
                 }
             }
         </script>
+        <script>
+            function moveTo(name) {
+                window.location.href = 'http://' + window.location.host + name;
+            }
+        </script>
+        <style>
+            div.box label {
+                color:#bbbbbb;
+                width:100%;
+                display: block;
+                background: #161712;
+                padding:10px 0 10px 0;
+            }
+        </style>
         <title>Projekt RAIM</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
     </head>
@@ -85,11 +99,19 @@
         </div>
         <form name="survey" id="survey">
             <div class="box">
+                <center>
+                    <button class="btn" type="button" onclick="moveTo('/')">Ankieta</button>
+                    <button class="btn" type="button" onclick="moveTo('/results')">Wyniki</button>
+                    <button class="btn" type="button" onclick="moveTo('/charts')">Wykresy</button>
+                    <button class="btn" type="button" onclick="moveTo('/bayes')">Naiwny klasyfikator bayesowski</button>
+                    <button class="btn" type="button" onclick="moveTo('/apriori')">Algorytm Apriori</button>
+                </center>
+                <br/>
                 @for(m <- message.split('\n')){
                     <center><h3>@m</h3></center>
                 }
                 @for(((name, body), qIndex) <- questions.zipWithIndex) {
-                    <label id="@qIndex">
+                    <label id="@qIndex" class="boxlabel">
                         <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
                             @for((line, index) <- body("question").zipWithIndex) {
                                 @if(index == 0) {

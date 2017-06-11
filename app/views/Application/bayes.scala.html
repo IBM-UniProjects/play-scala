@@ -1,0 +1,178 @@
+@import scala.collection.immutable.ListMap
+@(message: String, questions: ListMap[String, Map[String, List[String]]])
+
+<html>
+    <head>
+        <title>Projekt RAIM</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+        <style type="text/css">
+            select, input {
+                color: #161712;
+            }
+            /* Style the tab */
+            div.tab {
+                overflow: hidden;
+                border: 1px solid #ccc;
+                background-color: #f1f1f1;
+            }
+            /* Style the buttons inside the tab */
+            div.tab button {
+                background-color: inherit;
+                float: left;
+                border: none;
+                outline: none;
+                cursor: pointer;
+                padding: 14px 16px;
+                transition: 0.3s;
+            }
+            /* Change background color of buttons on hover */
+            div.tab button:hover {
+                background-color: #ddd;
+            }
+            /* Create an active/current tablink class */
+            div.tab button.active {
+                background-color: #ccc;
+            }
+            /* Style the tab content */
+            .tabcontent {
+                display: none;
+                padding: 6px 12px;
+                border: 1px solid #ccc;
+                border-top: none;
+            }
+        </style>
+        <script>
+            function moveTo(name) {
+                window.location.href = 'http://' + window.location.host + name;
+            }
+        </script>
+    </head>
+    <body>
+        <div class="main">
+            <h1>Ankieta na temat poglądów religijnych</h1><br>
+        </div>
+        <form name="survey" id="survey">
+            <div class="box">
+                <center>
+                <button class="btn" type="button" onclick="moveTo('/')">Ankieta</button>
+                <button class="btn" type="button" onclick="moveTo('/results')">Wyniki</button>
+                <button class="btn" type="button" onclick="moveTo('/charts')">Wykresy</button>
+                <button class="btn" type="button" onclick="moveTo('/bayes')">Naiwny klasyfikator bayesowski</button>
+                <button class="btn" type="button" onclick="moveTo('/apriori')">Algorytm Apriori</button>
+                </center>
+                <br/>
+                @for(m <- message.split('\n')){
+                    <center><h3>@m</h3></center>
+                }
+                <br>
+                <p>
+                    Wyniki analizy algorytmem eksploracji danych.
+                    <br>Algorytm: Naiwny klasyfikator bayesowski.
+                    <br>Program: RapidMiner Studio 7.5.
+                    <br>Liczba ankietowanych: 107.
+                </p>
+                <br/>
+                <p>
+                    Przykładowe wyniki:
+                    <br/>Prawdopodobieństwo nieuczestniczenia w obrządkach religijnych, wg poziomu wiary, wynosi:
+                    <ul style="padding-left: 2em">
+                        <li>10% - silnie wierzący (1/7 w skali Dawkinsa)</li>
+                        <li>&nbsp;4% - wierzący (2/7 w skali Dawkinsa)</li>
+                        <li>37% - wierzący, niepewni (3/7 w skali Dawkinsa)</li>
+                        <li>50% - agnostycy (4/7 w skali Dawkinsa)</li>
+                        <li>60% - ateiści, niepewni (5/7 w skali Dawkinsa)</li>
+                        <li>83% - ateiści (6/7 w skali Dawkinsa)</li>
+                        <li>71% - silni ateiści (7/7 w skali Dawkinsa)</li>
+                    </ul>
+                </p>
+                <label>
+                    <span id="question">
+                        <div class="tab">
+                            @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                                <button type="button" class="tablinks" onclick="openTab(event, '@name')" @if(name == "faith"){id="defaultOpen"}>
+                                    @if(name == "faith") {
+                                        <strong>@name</strong>
+                                    } else {
+                                        @name
+                                    }
+                                </button>
+                            }
+                        </div>
+                        @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                            <div id="@name" class="tabcontent">
+                                <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
+                                    @for((line, index) <- body("question").zipWithIndex) {
+                                        @if(index == 0) {
+                                            @line:<br>
+                                        } else {
+                                            <i style="font-size: 75%">@line</i><br>
+                                            }
+                                    }
+                                </span>
+                                <div class="question" id="@qIndex">
+                                @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                                    <label style="display: block; padding: 10px 0 10px 0;"><strong>value=@aIndex:</strong> @answer</label>
+                                }
+                                </div>
+                            </div>
+                        }
+                    </span>
+                    <script>
+                        document.getElementById("defaultOpen").click();
+                        function openTab(evt, tabName) {
+                            // Declare all variables
+                            var i, tabcontent, tablinks;
+
+                            // Get all elements with class="tabcontent" and hide them
+                            tabcontent = document.getElementsByClassName("tabcontent");
+                            for (i = 0; i < tabcontent.length; i++) {
+                                tabcontent[i].style.display = "none";
+                            }
+
+                            // Get all elements with class="tablinks" and remove the class "active"
+                            tablinks = document.getElementsByClassName("tablinks");
+                            for (i = 0; i < tablinks.length; i++) {
+                                tablinks[i].className = tablinks[i].className.replace(" active", "");
+                            }
+
+                            // Show the current tab, and add an "active" class to the button that opened the tab
+                            document.getElementById(tabName).style.display = "block";
+                            evt.currentTarget.className += " active";
+                        }
+                    </script>
+                    <div class="question" id="bayes" style="background-color: #ffffff">
+                        <table id="dataTable" class="display" width="100%">
+                            <thead>
+                                <tr>
+                                    <th>Attribute</th>
+                                    <th>Parameter</th>
+                                    <th>0</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                </tr>
+                            </thead>
+                        </table>
+                    </div>
+                    <script>
+                        $(document).ready(function() {
+                            $.getJSON('@routes.Assets.at("javascripts/naive_bayes.json")', function(data){
+                                $('#dataTable').DataTable({
+                                    data: data,
+                                    "paging": false
+                                });
+                            });
+                        } );
+                    </script>
+                </label>
+            </div>
+        </form>
+    </body>
+
+</html>

@@ -1,0 +1,162 @@
+@import scala.collection.immutable.ListMap
+@(message: String, questions: ListMap[String, Map[String, List[String]]])
+
+<html>
+    <head>
+        <title>Projekt RAIM</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("/stylesheets/main.css")">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/1.10.15/css/jquery.dataTables.css">
+        <script type="text/javascript" charset="utf8" src="//cdn.datatables.net/1.10.15/js/jquery.dataTables.js"></script>
+        <style type="text/css">
+                select, input {
+                    color: #161712;
+                }
+                /* Style the tab */
+                div.tab {
+                    overflow: hidden;
+                    border: 1px solid #ccc;
+                    background-color: #f1f1f1;
+                }
+                /* Style the buttons inside the tab */
+                div.tab button {
+                    background-color: inherit;
+                    float: left;
+                    border: none;
+                    outline: none;
+                    cursor: pointer;
+                    padding: 14px 16px;
+                    transition: 0.3s;
+                }
+                /* Change background color of buttons on hover */
+                div.tab button:hover {
+                    background-color: #ddd;
+                }
+                /* Create an active/current tablink class */
+                div.tab button.active {
+                    background-color: #ccc;
+                }
+                /* Style the tab content */
+                .tabcontent {
+                    display: none;
+                    padding: 6px 12px;
+                    border: 1px solid #ccc;
+                    border-top: none;
+                }
+        </style>
+        <script>
+                function moveTo(name) {
+                    window.location.href = 'http://' + window.location.host + name;
+                }
+        </script>
+    </head>
+    <body>
+        <div class="main">
+            <h1>Ankieta na temat poglądów religijnych</h1><br>
+        </div>
+        <form name="survey" id="survey">
+            <div class="box">
+                <center>
+                    <button class="btn" type="button" onclick="moveTo('/')">Ankieta</button>
+                    <button class="btn" type="button" onclick="moveTo('/results')">Wyniki</button>
+                    <button class="btn" type="button" onclick="moveTo('/charts')">Wykresy</button>
+                    <button class="btn" type="button" onclick="moveTo('/bayes')">Naiwny klasyfikator bayesowski</button>
+                    <button class="btn" type="button" onclick="moveTo('/apriori')">Algorytm Apriori</button>
+                </center>
+                <br/>
+                @for(m <- message.split('\n')){
+                    <center><h3>@m</h3></center>
+                }
+                <br>
+                <p>
+                    Wyniki analizy algorytmem eksploracji danych.
+                    <br>Algorytm: Apriori.
+                    <br>Program: RapidMiner Studio 7.5.
+                    <br>Liczba ankietowanych: 108.
+                </p>
+                <br/>
+                <p>
+                    <pre style="font-size: inherit; font-family: inherit; color: inherit">
+Wyniki:
+Apriori
+=======
+
+Minimum support: 0.1 (11 instances)
+Minimum metric &lt;confidence&gt;: 0.6
+Number of cycles performed: 18
+
+Generated sets of large itemsets:
+
+Size of set of large itemsets L(1): 28
+
+Size of set of large itemsets L(2): 25
+
+Size of set of large itemsets L(3): 1
+
+Best rules found:
+
+1. year=3 gender=kobieta 15 ==> age=18 - 23 14    conf:(0.93)
+2. morality=prawdopodobnie nie, zasady moralne potrafią ewoluować 15
+   ==> religion_importance=odczuwam niechęć 13    conf:(0.87)
+3. gender=kobieta age=18 - 23 19 ==> year=3 14    conf:(0.74)
+4. year=3 age=18 - 23 20 ==> gender=kobieta 14    conf:(0.7)
+5. year=3 29 ==> age=18 - 23 20    conf:(0.69)
+                    </pre>
+                </p>
+                <label>
+                    <span id="question">
+                        <div class="tab">
+                        @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                            <button type="button" class="tablinks" onclick="openTab(event, '@name')" @if(qIndex == 0){id="defaultOpen"}>
+                            @name
+                            </button>
+                        }
+                        </div>
+                        @for(((name, body), qIndex) <- questions.zipWithIndex) {
+                            <div id="@name" class="tabcontent">
+                                <span id="question@qIndex"><img src="@routes.Assets.at("images/favicon.png")"> @(qIndex+1).
+                                    @for((line, index) <- body("question").zipWithIndex) {
+                                        @if(index == 0) {
+                                            @line:<br>
+                                        } else {
+                                            <i style="font-size: 75%">@line</i><br>
+                                            }
+                                    }
+                                </span>
+                                <div class="question" id="@qIndex">
+                                @for((answer, aIndex) <- body("answers").zipWithIndex) {
+                                    <label style="display: block; padding: 10px 0 10px 0;"><strong>value=@aIndex:</strong> @answer</label>
+                                }
+                                </div>
+                            </div>
+                        }
+                    </span>
+                    <script>
+                            document.getElementById("defaultOpen").click();
+                            function openTab(evt, tabName) {
+                                // Declare all variables
+                                var i, tabcontent, tablinks;
+
+                                // Get all elements with class="tabcontent" and hide them
+                                tabcontent = document.getElementsByClassName("tabcontent");
+                                for (i = 0; i < tabcontent.length; i++) {
+                                    tabcontent[i].style.display = "none";
+                                }
+
+                                // Get all elements with class="tablinks" and remove the class "active"
+                                tablinks = document.getElementsByClassName("tablinks");
+                                for (i = 0; i < tablinks.length; i++) {
+                                    tablinks[i].className = tablinks[i].className.replace(" active", "");
+                                }
+
+                                // Show the current tab, and add an "active" class to the button that opened the tab
+                                document.getElementById(tabName).style.display = "block";
+                                evt.currentTarget.className += " active";
+                            }
+                    </script>
+                </label>
+            </div>
+        </form>
+    </body>
+
+</html>

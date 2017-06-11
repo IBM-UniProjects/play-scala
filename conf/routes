@@ -6,6 +6,12 @@
 GET           /                      controllers.Application.index
 # Results
 GET           /results               controllers.Application.results
+# Charts
+GET           /charts                controllers.Application.charts
+# Bayes
+GET           /bayes                 controllers.Application.bayes
+# Apriori
+GET           /apriori               controllers.Application.apriori
 
 # Database intialization and cleanup
 GET           /cleanup               controllers.Application.cleanup
